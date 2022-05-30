@@ -60,19 +60,20 @@ jobs:
           kubectl apply -k "github.com/kubeflow/katib.git/manifests/v1beta1/installs/katib-standalone?ref=v0.13.0"
           kubectl wait --for=condition=ready --timeout=${TIMEOUT} -l "katib.kubeflow.org/component in (controller,db-manager,mysql,ui)" -n kubeflow pod
           kubectl get pods -n kubeflow
-      - name: Download tools
+      -
+        name: Download tools
         run: |
-          wget -O yq https://github.com/mikefarah/yq/releases/download/v4.25.2/yq_linux_amd64
+          wget -qO yq https://github.com/mikefarah/yq/releases/download/v4.25.2/yq_linux_amd64
           mv yq /usr/local/bin/yq
           chmod +x /usr/local/bin/yq
       -
         name: Deploy Experiment
         run: |
-          wget -O experiment.yaml "https://raw.githubusercontent.com/kubeflow/katib/master/examples/v1beta1/${{ matrix.experiments }}"
+          wget -qO experiment.yaml "https://raw.githubusercontent.com/kubeflow/katib/master/examples/v1beta1/${{ matrix.experiments }}"
           yq eval -i '.spec.parallelTrialCount=1,.spec.maxTrialCount=1,.spec.maxFailedTrialCount=0' experiment.yaml
           kubectl apply -f experiment.yaml
       -
-        name: output logs
+        name: Output logs
         run: |
           timeout 900 kubectl get pods -n kubeflow -w
           kubectl describe experiment -n kubeflow
