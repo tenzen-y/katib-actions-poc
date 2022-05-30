@@ -2,7 +2,7 @@ name: integration test
 on:
   push:
     branches:
-      - master
+      - "*"
 jobs:
   integration-test:
     runs-on: ubuntu-20.04
@@ -63,7 +63,7 @@ jobs:
       -
         name: Deploy Experiment
         run: |
-          kubectl apply -f "https://raw.githubusercontent.com/kubeflow/katib/master/examples/${{ matrix.experiments }}"
+          kubectl apply -f "https://raw.githubusercontent.com/kubeflow/katib/master/examples/v1beta1/${{ matrix.experiments }}"
           timeout 1800 kubectl get pods -n kubeflow -w
           kubectl describe experiment -n kubeflow
       -
