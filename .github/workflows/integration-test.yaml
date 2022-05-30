@@ -58,7 +58,8 @@ jobs:
         run: |
           TIMEOUT=30m
           kubectl apply -k "github.com/kubeflow/katib.git/manifests/v1beta1/installs/katib-standalone?ref=v0.13.0"
-          kubectl wait --for=condition=ready --timeout=${TIMEOUT} -l "katib.kubeflow.org/component in (controller,db-manager,mysql,ui)" -n kubeflow pod
+          sleep 5
+          kubectl wait --for=condition=ready --timeout="$TIMEOUT" -l "katib.kubeflow.org/component in (controller,db-manager,mysql,ui)" -n kubeflow pod
           kubectl get pods -n kubeflow
       -
         name: Download tools
@@ -75,11 +76,5 @@ jobs:
       -
         name: Output logs
         run: |
-          timeout 900 kubectl get pods -n kubeflow -w
-          kubectl describe experiment -n kubeflow
-      -
-        name: Teardown
-        run: |
-          kubectl delete -f experiment.yaml --wait false
-          kubectl delete -k "github.com/kubeflow/katib.git/manifests/v1beta1/installs/katib-standalone?ref=v0.13.0" --wait false
-          kubectl delete -k "github.com/kubeflow/training-operator/manifests/overlays/standalone?ref=v1.4.0" --wait false
+          timeout 900 kubectl get pods -n kubeflow -w || true
+          kubectl get experiment -n kubeflow
