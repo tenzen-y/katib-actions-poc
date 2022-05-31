@@ -60,4 +60,6 @@ spec:
                   - "--log-path=/katib/mnist.json"
                   - "--lr=${trialParameters.learningRate}"
                   - "--logger=hypertune"
+                  - "--batch-size=8"
+                  - "--epochs=1"
             restartPolicy: Never
