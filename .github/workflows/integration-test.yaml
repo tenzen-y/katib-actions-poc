@@ -64,7 +64,15 @@ jobs:
         name: Deploy Experiment
         run: kubectl apply -f experiments/${{ matrix.experiments }}
       -
+        name: Download tools
+        run: |
+          wget -qO yq https://github.com/mikefarah/yq/releases/download/v4.25.2/yq_linux_amd64
+          mv yq /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
+      -
         name: Output logs
         run: |
-          timeout 1800 kubectl get pods -n kubeflow -w || true
+          experiment_name=$(yq '.metadata.name' experiments/${{ matrix.experiments }})
+          kubectl wait --for=condition=succeeded --timeout=40m experiment "$experiment_name" -n kubeflow || true
+          kubectl get pods -n kubeflow
           kubectl get experiment -n kubeflow
