@@ -30,7 +30,7 @@ spec:
       - name: start_step
         value: "2"
   parallelTrialCount: 1
-  maxTrialCount: 1
+  maxTrialCount: 2
   maxFailedTrialCount: 0
   parameters:
     - name: lr
@@ -60,6 +60,5 @@ spec:
                   - "--log-path=/katib/mnist.json"
                   - "--lr=${trialParameters.learningRate}"
                   - "--logger=hypertune"
-                  - "--batch-size=32"
                   - "--epochs=1"
             restartPolicy: Never

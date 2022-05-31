@@ -22,7 +22,7 @@ spec:
       - name: start_step
         value: "5"
   parallelTrialCount: 1
-  maxTrialCount: 1
+  maxTrialCount: 2
   maxFailedTrialCount: 0
   parameters:
     - name: lr
