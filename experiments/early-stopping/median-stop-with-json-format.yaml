@@ -1,0 +1,126 @@
+# This is example with median stopping early stopping rule with logs in JSON format.
+# It has bad feasible space for learning rate to show more early stopped Trials.
+apiVersion: kubeflow.org/v1beta1
+kind: Experiment
+metadata:
+  namespace: kubeflow
+  name: median-stop-with-json-format
+spec:
+  objective:
+    type: maximize
+    goal: 0.99
+    objectiveMetricName: accuracy
+    additionalMetricNames:
+      - loss
+  metricsCollectorSpec:
+    source:
+      fileSystemPath:
+        path: "/katib/mnist.json"
+        kind: File
+        format: JSON
+    collector:
+      kind: File
+  algorithm:
+    algorithmName: random
+  earlyStopping:
+    algorithmName: medianstop
+    algorithmSettings:
+      - name: min_trials_required
+        value: "1"
+      - name: start_step
+        value: "2"
+  parallelTrialCount: 1
+  maxTrialCount: 1
+  maxFailedTrialCount: 0
+  parameters:
+    - name: lr
+      parameterType: double
+      feasibleSpace:
+        min: "0.01"
+        max: "0.5"
+  trialTemplate:
+    retain: true
+    primaryContainerName: training-container
+    trialParameters:
+      - name: learningRate
+        description: Learning rate for the training model
+        reference: lr
+    trialSpec:
+      apiVersion: batch/v1
+      kind: Job
+      spec:
+        template:
+          spec:
+            containers:
+              - name: training-container
+                image: docker.io/kubeflowkatib/pytorch-mnist:latest
+                command:
+                  - "python3"
+                  - "/opt/pytorch-mnist/mnist.py"
+                  - "--log-path=/katib/mnist.json"
+                  - "--lr=${trialParameters.learningRate}"
+                  - "--logger=hypertune"
+            restartPolicy: Never
+# This is example with median stopping early stopping rule with logs in JSON format.
+# It has bad feasible space for learning rate to show more early stopped Trials.
+apiVersion: kubeflow.org/v1beta1
+kind: Experiment
+metadata:
+  namespace: kubeflow
+  name: median-stop-with-json-format
+spec:
+  objective:
+    type: maximize
+    goal: 0.99
+    objectiveMetricName: accuracy
+    additionalMetricNames:
+      - loss
+  metricsCollectorSpec:
+    source:
+      fileSystemPath:
+        path: "/katib/mnist.json"
+        kind: File
+        format: JSON
+    collector:
+      kind: File
+  algorithm:
+    algorithmName: random
+  earlyStopping:
+    algorithmName: medianstop
+    algorithmSettings:
+      - name: min_trials_required
+        value: "1"
+      - name: start_step
+        value: "2"
+  parallelTrialCount: 1
+  maxTrialCount: 1
+  maxFailedTrialCount: 0
+  parameters:
+    - name: lr
+      parameterType: double
+      feasibleSpace:
+        min: "0.01"
+        max: "0.5"
+  trialTemplate:
+    retain: true
+    primaryContainerName: training-container
+    trialParameters:
+      - name: learningRate
+        description: Learning rate for the training model
+        reference: lr
+    trialSpec:
+      apiVersion: batch/v1
+      kind: Job
+      spec:
+        template:
+          spec:
+            containers:
+              - name: training-container
+                image: docker.io/kubeflowkatib/pytorch-mnist:latest
+                command:
+                  - "python3"
+                  - "/opt/pytorch-mnist/mnist.py"
+                  - "--log-path=/katib/mnist.json"
+                  - "--lr=${trialParameters.learningRate}"
+                  - "--logger=hypertune"
+            restartPolicy: Never

@@ -61,31 +61,8 @@ jobs:
           kubectl wait --for=condition=ready --timeout="$TIMEOUT" -l "katib.kubeflow.org/component in (controller,db-manager,mysql,ui)" -n kubeflow pod
           kubectl get pods -n kubeflow
       -
-        name: Download tools
-        run: |
-          wget -qO yq https://github.com/mikefarah/yq/releases/download/v4.25.2/yq_linux_amd64
-          mv yq /usr/local/bin/yq
-          chmod +x /usr/local/bin/yq
-      -
-        name: Download Experiment from upstream
-        run: wget -qO experiment.yaml "https://raw.githubusercontent.com/kubeflow/katib/master/examples/v1beta1/${{ matrix.experiments }}"
-      -
-        name: Reduce worker replicas if experiment type is pytorchjob
-        if: ${{ matrix.experiments }} == 'kubeflow-training-operator/pytorchjob-mnist.yaml'
-        run: yq eval -i '.spec.trialTemplate.trialSpec.spec.pytorchReplicaSpecs.Worker.replicas=1' experiment.yaml
-      -
-        name: Not tuning epochs if suggestion type is hyperband
-        if: ${{ matrix.experiments }} == 'hp-tuning/hyperband.yaml'
-        run: yq eval -i 'del(.spec.parameters[3],.spec.trialTemplate.trialParameters[3],.spec.trialTemplate.trialSpec.spec.template.spec.containers[0].command[6])' experiment.yaml
-      -
-        name: Not tuning epochs if algorithm is median stop with json format logs
-        if: ${{ matrix.experiments }} == 'early-stopping/median-stop-with-json-format.yaml'
-        run: yq eval -i 'del(.spec.parameters[1],.spec.trialTemplate.trialParameters[1],.spec.trialTemplate.trialSpec.spec.template.spec.containers[0].command[2])' experiment.yaml
-      -
         name: Deploy Experiment
-        run: |
-          yq eval -i '.spec.parallelTrialCount=1,.spec.maxTrialCount=1,.spec.maxFailedTrialCount=0' experiment.yaml
-          kubectl apply -f experiment.yaml
+        run: kubectl apply -f experiments/${{ matrix.experiments }}
       -
         name: Output logs
         run: |
