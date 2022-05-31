@@ -75,11 +75,11 @@ jobs:
         run: yq eval -i '.spec.trialTemplate.trialSpec.spec.pytorchReplicaSpecs.Worker.replicas=1' experiment.yaml
       -
         name: Not tuning epochs if suggestion type is hyperband
-        if: ${{ matrix.experiments }} == hp-tuning/hyperband.yaml
+        if: ${{ matrix.experiments }} == 'hp-tuning/hyperband.yaml'
         run: yq eval -i 'del(.spec.parameters[3],.spec.trialTemplate.trialParameters[3],.spec.trialTemplate.trialSpec.spec.template.spec.containers[0].command[6])' experiment.yaml
       -
         name: Not tuning epochs if algorithm is median stop with json format logs
-        if: ${{ matrix.experiments }} == early-stopping/median-stop-with-json-format.yaml
+        if: ${{ matrix.experiments }} == 'early-stopping/median-stop-with-json-format.yaml'
         run: yq eval -i 'del(.spec.parameters[1],.spec.trialTemplate.trialParameters[1],.spec.trialTemplate.trialSpec.spec.template.spec.containers[0].command[2])' experiment.yaml
       -
         name: Deploy Experiment
