@@ -66,5 +66,5 @@ jobs:
       -
         name: Output logs
         run: |
-          timeout 900 kubectl get pods -n kubeflow -w || true
+          timeout 1800 kubectl get pods -n kubeflow -w || true
           kubectl get experiment -n kubeflow

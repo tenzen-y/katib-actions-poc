@@ -50,7 +50,7 @@ spec:
                       - "python3"
                       - "/opt/pytorch-mnist/mnist.py"
                       - "--epochs=1"
-                      - "--batch-size=24"
+                      - "--batch-size=16"
                       - "--lr=${trialParameters.learningRate}"
                       - "--momentum=${trialParameters.momentum}"
           Worker:
@@ -65,6 +65,6 @@ spec:
                       - "python3"
                       - "/opt/pytorch-mnist/mnist.py"
                       - "--epochs=1"
-                      - "--batch-size=24"
+                      - "--batch-size=16"
                       - "--lr=${trialParameters.learningRate}"
                       - "--momentum=${trialParameters.momentum}"
